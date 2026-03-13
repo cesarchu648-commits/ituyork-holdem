@@ -1,0 +1,96 @@
+[
+  {
+    "id": "admin_001",
+    "email": "ituyork19@gmail.com",
+    "username": "Chu.in.two_Itupoker_078",
+    "fichas": 998489702,
+    "gold": 1000003278,
+    "handsWon": 111,
+    "totalChipsWon": 1024350,
+    "bestHand": "Royal Flush",
+    "tournamentsWon": 102,
+    "vipRoomsWon": 101,
+    "isAdmin": true,
+    "level": 1,
+    "xp": 0,
+    "badges": [],
+    "inventory": [
+      "50000 fichas",
+      "250000 fichas",
+      "1000 gold",
+      "Golden Card Skin",
+      "1000 gold",
+      "250000 fichas",
+      "1000 gold",
+      "Golden Card Skin"
+    ],
+    "playStats": {
+      "aggressiveness": 50,
+      "luck": 50,
+      "bluff": 50
+    },
+    "consecutiveDays": 5,
+    "lastClaimDate": "2026-03-13T03:02:21.066Z"
+  },
+  {
+    "id": "1773015482177",
+    "email": "itugamer@outlook.es",
+    "username": "itugamer",
+    "fichas": 1000,
+    "gold": 0,
+    "handsWon": 0,
+    "totalChipsWon": 0,
+    "bestHand": "None",
+    "tournamentsWon": 0,
+    "vipRoomsWon": 0,
+    "isAdmin": false
+  },
+  {
+    "id": "1773037486013",
+    "email": "cesarchu648@gmail.com",
+    "username": "cesarchu648",
+    "fichas": 500,
+    "gold": 0,
+    "handsWon": 0,
+    "totalChipsWon": 0,
+    "bestHand": "None",
+    "tournamentsWon": 0,
+    "vipRoomsWon": 0,
+    "level": 1,
+    "xp": 0,
+    "badges": [],
+    "inventory": [],
+    "playStats": {
+      "aggressiveness": 50,
+      "luck": 50,
+      "bluff": 50
+    },
+    "lastClaimDate": "2026-03-09T06:24:51.379Z",
+    "consecutiveDays": 1,
+    "isAdmin": false
+  },
+  {
+    "id": "1773070828350",
+    "email": "seischuloy@hotmail.com",
+    "username": "seischuloy",
+    "fichas": 284440,
+    "gold": 213000,
+    "handsWon": 0,
+    "totalChipsWon": 0,
+    "bestHand": "None",
+    "tournamentsWon": 0,
+    "vipRoomsWon": 0,
+    "level": 1,
+    "xp": 0,
+    "badges": [],
+    "inventory": [],
+    "playStats": {
+      "aggressiveness": 50,
+      "luck": 50,
+      "bluff": 50
+    },
+    "lastClaimDate": "2026-03-09T15:40:30.449Z",
+    "consecutiveDays": 1,
+    "isAdmin": false
+  }
+]

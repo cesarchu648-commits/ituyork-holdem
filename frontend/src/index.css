@@ -1,0 +1,381 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand Colors */
+  --color-bg-dark: #050505;
+  --color-bg-panel: rgba(10, 10, 10, 0.85);
+
+  --color-neon-blue: #00d2ff;
+  --color-neon-purple: #b500ff;
+  --color-neon-green: #39ff14;
+  --color-gold: #ffcc00;
+
+  --color-text-primary: #e0e0e0;
+  --color-text-muted: #808080;
+
+  /* Glassmorphism 3.0 Tokens */
+  --glass-bg: rgba(15, 15, 15, 0.6);
+  --glass-border: rgba(255, 255, 215, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.04);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.7);
+  --glass-blur: blur(20px);
+  --glass-border-light: rgba(255, 215, 0, 0.2);
+
+  /* Typography */
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  /* Poker table texture backgrop, fallback to dark gradient */
+  background: radial-gradient(circle at center, #1a1e27 0%, #0a0c10 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism Utility Classes */
+.glass-panel {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add an inner bevel highlight for that 3.0 look */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glass-border-light), transparent);
+  pointer-events: none;
+}
+
+.neon-text-blue {
+  color: #fff;
+  text-shadow: 0 0 8px var(--color-neon-blue), 0 0 16px var(--color-neon-blue), 0 0 24px rgba(0, 210, 255, 0.4);
+}
+
+.neon-text-gold {
+  color: var(--color-gold);
+  text-shadow: 0 0 8px var(--color-gold), 0 0 16px var(--color-gold), 0 0 30px rgba(255, 204, 0, 0.5);
+}
+
+.neon-border-green {
+  border: 1px solid var(--color-neon-green);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.5), inset 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+/* Generic Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00f0ff 0%, #0088ff 100%);
+  color: #000;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+.btn-glass {
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Animations */
+@keyframes neonBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    color: #fff;
+    text-shadow: 0 0 10px var(--color-neon-blue);
+  }
+
+  50% {
+    transform: translateY(-5px);
+    color: var(--color-neon-blue);
+    text-shadow: 0 0 20px var(--color-neon-blue), 0 0 40px var(--color-neon-blue);
+  }
+}
+
+.animate-neon-bounce:hover {
+  animation: neonBounce 0.6s infinite ease-in-out;
+}
+
+@keyframes logoPulse {
+  0% {
+    text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #00f0ff;
+    color: #e0ffff;
+  }
+
+  33% {
+    text-shadow: 0 0 15px #39ff14, 0 0 25px #39ff14, 0 0 35px #39ff14;
+    color: #f0fff0;
+  }
+
+  66% {
+    text-shadow: 0 0 15px #b500ff, 0 0 25px #b500ff, 0 0 35px #b500ff;
+    color: #f8e0ff;
+  }
+
+  100% {
+    text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #00f0ff;
+    color: #e0ffff;
+  }
+}
+
+@keyframes letterBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.logo-animated {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 2.5rem;
+  animation: logoPulse 3s infinite alternate ease-in-out;
+  cursor: pointer;
+}
+
+.logo-animated span {
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.logo-animated:hover span {
+  animation: letterBounce 0.5s ease;
+  color: var(--color-gold);
+}
+
+@keyframes dealCard {
+  0% {
+    transform: translate(0, -200px) scale(0) rotate(180deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1) rotate(var(--target-rotate, 0deg));
+    opacity: 1;
+  }
+}
+
+.card-deal {
+  animation: dealCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes winnerZoom {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.winner-celebration {
+  animation: winnerZoom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in {
+  animation: fadeInScale 0.4s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Gamification Utilities */
+.grid-3d {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+  perspective: 1000px;
+}
+
+.card-3d {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+}
+
+.card-3d:hover {
+  transform: rotateY(10deg) rotateX(5deg) translateZ(20px);
+  border-color: var(--color-neon-blue);
+  box-shadow: 0 15px 35px rgba(0, 240, 255, 0.2);
+}
+
+.locked-item {
+  filter: grayscale(1) opacity(0.5);
+}
+
+.podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  height: 200px;
+  margin-top: 40px;
+}
+
+.podium-step {
+  width: 80px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.podium-step.gold {
+  border-color: #ffd700;
+  height: 100px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.podium-step.silver {
+  border-color: #c0c0c0;
+  height: 70px;
+}
+
+.podium-step.bronze {
+  border-color: #cd7f32;
+  height: 50px;
+}
+
+.podium-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  top: -50px;
+  border: 2px solid white;
+}
+
+.chart-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-neon-blue), var(--color-neon-purple));
+  width: 0;
+  transition: width 1s ease-out;
+}
+
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+}
