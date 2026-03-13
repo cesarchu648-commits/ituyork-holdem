@@ -1,0 +1,7 @@
+# Railway deployment config
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "node server.js"
+healthcheckPath = "/"

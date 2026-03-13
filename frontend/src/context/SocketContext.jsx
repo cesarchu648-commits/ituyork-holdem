@@ -9,7 +9,8 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         if (!socketRef.current) {
-            const newSocket = io('http://localhost:3001');
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+            const newSocket = io(BACKEND_URL);
             socketRef.current = newSocket;
 
             newSocket.on('connect', () => {
