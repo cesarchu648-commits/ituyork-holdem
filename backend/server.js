@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Healthcheck for Railway
-app.get('/', (req, res) => res.send('ItuYork Holdem Server OK'));
+app.get('/', (req, res) => res.send('ItuYork Holdem Server Online'));
 
 const server = http.createServer(app);
 const io = new Server(server, {
