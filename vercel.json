@@ -1,9 +1,5 @@
-[build]
-  base = "frontend/"
-  command = "npm run build"
-  publish = "frontend/dist"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

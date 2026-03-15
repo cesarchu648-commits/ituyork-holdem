@@ -3,7 +3,7 @@ Write-Host 'Cerrando procesos anteriores de Node...' -ForegroundColor Yellow
 Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force
 
 Write-Host 'Iniciando Backend...' -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit -Command `"cd backend; node server.js`""
+Start-Process powershell -ArgumentList "-NoExit -Command `"cd backend; npm run dev`""
 
 Write-Host 'Iniciando Frontend...' -ForegroundColor Cyan
 Start-Process powershell -ArgumentList "-NoExit -Command `"cd frontend; npm run dev`""
