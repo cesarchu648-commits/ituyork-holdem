@@ -5,8 +5,11 @@ import { ShoppingBag, Box, Gem, Zap } from 'lucide-react';
 const PACKAGES = [
     { id: 'Pack_Bronze', name: 'Cofre Bronce', type: 'fichas', amount: 50000, price: 100, priceType: 'gold', color: '#cd7f32' },
     { id: 'Pack_Silver', name: 'Cofre Plata', type: 'fichas', amount: 250000, price: 450, priceType: 'gold', color: '#c0c0c0' },
-    { id: 'Pack_Gold', name: 'Cofre Oro', type: 'gold', amount: 1000, price: 500000, priceType: 'fichas', color: '#ffd700' },
-    { id: 'Pack_Legendary', name: 'Cofre Legendario', type: 'inventory', itemId: 'Golden Card Skin', price: 2000, priceType: 'gold', color: '#b500ff' }
+    { id: 'Pack_Gold_S', name: 'Pequeño Oro', type: 'gold', amount: 500, price: 100000, priceType: 'fichas', color: '#ffd700' },
+    { id: 'Pack_Gold', name: 'Cofre Oro', type: 'gold', amount: 2000, price: 350000, priceType: 'fichas', color: '#ffd700' },
+    { id: 'Pack_Starter', name: 'Starter Kit', type: 'fichas', amount: 100000, price: 50, priceType: 'gold', color: '#00f0ff' },
+    { id: 'Pack_VIP', name: 'VIP Access', type: 'inventory', itemId: 'VIP Badge', price: 5000, priceType: 'gold', color: '#ff4b2b' },
+    { id: 'Pack_Legendary', name: 'Cofre Legendario', type: 'inventory', itemId: 'Golden Card Skin', price: 10000, priceType: 'gold', color: '#b500ff' }
 ];
 
 export default function Store ( { onClose } )

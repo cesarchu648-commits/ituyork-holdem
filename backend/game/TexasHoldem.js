@@ -570,7 +570,8 @@ class TexasHoldem
                 username: w.player.user.username,
                 amount: splitAmount,
                 handName: w.handName,
-                holeCards: w.player.holeCards
+                holeCards: w.player.holeCards,
+                score: w.score
             };
         } );
 

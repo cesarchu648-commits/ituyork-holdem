@@ -2,7 +2,7 @@ import React from 'react';
 import { User, Shield, Target, Flame, TrendingUp } from 'lucide-react';
 
 export default function Profile({ user, onClose }) {
-    const nextLevelXp = (user.level || 1) * 1000;
+    const nextLevelXp = (user.level || 1) * 200;
     const progress = ((user.xp || 0) / nextLevelXp) * 100;
 
     const stats = [

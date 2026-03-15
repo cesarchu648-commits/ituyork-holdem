@@ -36,7 +36,7 @@ export default function Lobby ()
                 setMessages( prev => [ ...prev, msgData ].slice( -50 ) ); // keep last 50
             } );
 
-            socket.on( 'global_session_update', ( data ) =>
+            socket.on( 'global_session_update', () =>
             {
                 // Not strictly needed for UI now as we removed users display, 
                 // but kept for potential future use or debugging
@@ -93,7 +93,7 @@ export default function Lobby ()
             const t = setTimeout( () => setShowDailyRewards( true ), 100 );
             return () => clearTimeout( t );
         }
-    }, [ user?.lastClaimDate ] );
+    }, [ user?.lastClaimDate, user ] );
 
     const sendGlobalChat = ( e ) =>
     {
@@ -162,7 +162,17 @@ export default function Lobby ()
                     <div style={ { textAlign: 'center', marginBottom: '20px', cursor: 'pointer' } } onClick={ () => setShowProfile( true ) }>
                         <div style={ { width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(45deg, #00f0ff, #b500ff)', margin: '0 auto 10px', border: '2px solid white', boxShadow: '0 0 10px rgba(0,240,255,0.3)' } } />
                         <h3>{ user.username }</h3>
-                        <div style={ { fontSize: '0.8rem', color: 'var(--color-neon-blue)', fontWeight: 'bold' } }>Nivel { user.level || 1 }</div>
+                        <div style={ { fontSize: '0.8rem', color: 'var(--color-neon-blue)', fontWeight: 'bold', marginBottom: '8px' } }>Nivel { user.level || 1 }</div>
+                        
+                        {/* XP Mini Bar */}
+                        <div style={{ width: '120px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', margin: '0 auto', overflow: 'hidden' }}>
+                            <div style={{ 
+                                width: `${Math.min(100, ((user.xp || 0) / ((user.level || 1) * 200)) * 100)}%`, 
+                                height: '100%', 
+                                background: 'linear-gradient(90deg, #00f0ff, #b500ff)',
+                                boxShadow: '0 0 10px #00f0ff'
+                            }} />
+                        </div>
                     </div>
 
                     <div className="glass-panel" style={ { padding: '15px', marginBottom: '20px' } }>

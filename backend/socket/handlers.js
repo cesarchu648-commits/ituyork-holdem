@@ -26,10 +26,9 @@ module.exports = function configureSockets(io, connectedUsers) {
             if (p.isBot) return;
             let dbUser = users.find(u => u.username === p.user.username);
             if (dbUser) {
-                // If VIP/Torneos, chips won go to Gold. If Pro/Principiante, go to Fichas.
-                // Actually they are playing with their stack which is already separated in chips.
-                // We'll sync ONLY when they leave, BUT we also want live stats updates for the Inventario!
-                // Best is to update their stats tracking here.
+                // Participation XP
+                dbUser.xp = (dbUser.xp || 0) + 5;
+                checkLevelUp(dbUser);
                 updated = true;
             }
         });
@@ -40,10 +39,25 @@ module.exports = function configureSockets(io, connectedUsers) {
             if ( dbUser )
             {
                 dbUser.handsWon = ( dbUser.handsWon || 0 ) + 1;
-                dbUser.totalChipsWon = ( dbUser.totalChipsWon || 0 ) + w.amount;
+                
+                // Track Best Hand
+                if (w.score && w.score > (dbUser.bestHandScore || 0)) {
+                    dbUser.bestHandScore = w.score;
+                    dbUser.bestHandName = w.handName;
+                }
+
+                // Track total chips won by category
+                if (tier === 'VIP' || tier === 'Torneos') {
+                    dbUser.totalGoldWon = (dbUser.totalGoldWon || 0) + w.amount;
+                } else {
+                    dbUser.totalFichasWon = (dbUser.totalFichasWon || 0) + w.amount;
+                }
+
+                // Win XP
+                dbUser.xp = (dbUser.xp || 0) + 20;
+                checkLevelUp(dbUser);
 
                 // Check for "anuncio con bombos y platillos" when there is only one winner standing
-                // This usually happens at the end of a VIP/Tournament session or when everyone else folded/quit
                 if ( ( tier === 'VIP' || tier === 'Torneos' ) && players.filter( p => p.chips > 0 ).length === 1 )
                 {
                     if ( tier === 'VIP' ) dbUser.vipRoomsWon = ( dbUser.vipRoomsWon || 0 ) + 1;
@@ -83,16 +97,39 @@ module.exports = function configureSockets(io, connectedUsers) {
             let dbUser = users.find( u => u.email === st.email );
             if ( dbUser )
             {
-                connectedUsers[ socketId ].fichas = dbUser.fichas;
-                connectedUsers[ socketId ].gold = dbUser.gold;
-                connectedUsers[ socketId ].handsWon = dbUser.handsWon;
-                connectedUsers[ socketId ].totalChipsWon = dbUser.totalChipsWon;
-                connectedUsers[ socketId ].tournamentsWon = dbUser.tournamentsWon;
-                connectedUsers[ socketId ].vipRoomsWon = dbUser.vipRoomsWon;
+                Object.assign(connectedUsers[socketId], {
+                    fichas: dbUser.fichas,
+                    gold: dbUser.gold,
+                    handsWon: dbUser.handsWon,
+                    totalFichasWon: dbUser.totalFichasWon,
+                    totalGoldWon: dbUser.totalGoldWon,
+                    tournamentsWon: dbUser.tournamentsWon,
+                    vipRoomsWon: dbUser.vipRoomsWon,
+                    level: dbUser.level,
+                    xp: dbUser.xp,
+                    bestHandName: dbUser.bestHandName
+                });
                 io.to( socketId ).emit( 'user_update', connectedUsers[ socketId ] );
             }
         }
     };
+
+    function checkLevelUp(user) {
+        let xpNeeded = user.level * 200;
+        while (user.xp >= xpNeeded) {
+            user.xp -= xpNeeded;
+            user.level++;
+            xpNeeded = user.level * 200;
+            
+            // Notify level up if connected
+            let socketId = Object.keys(connectedUsers).find(sid => connectedUsers[sid].id === user.id);
+            if (socketId) {
+                io.to(socketId).emit('level_up', { level: user.level });
+                io.to(socketId).emit('notification', `¡FELICIDADES! Has subido al Nivel ${user.level}`);
+                io.to(socketId).emit('play_audio', 'victory');
+            }
+        }
+    }
 
     io.on('connection', (socket) => {
         socket.on('login', (data) => {
@@ -116,7 +153,10 @@ module.exports = function configureSockets(io, connectedUsers) {
                         gold: 0,
                         handsWon: 0,
                         totalChipsWon: 0,
-                        bestHand: 'None',
+                        bestHandName: 'Carta Alta',
+                        bestHandScore: 0,
+                        totalFichasWon: 0,
+                        totalGoldWon: 0,
                         tournamentsWon: 0,
                         vipRoomsWon: 0,
                         level: 1,
@@ -159,6 +199,10 @@ module.exports = function configureSockets(io, connectedUsers) {
                 if (user.xp === undefined) { user.xp = 0; migrated = true; }
                 if (user.badges === undefined) { user.badges = []; migrated = true; }
                 if (user.inventory === undefined) { user.inventory = []; migrated = true; }
+                if (user.bestHandName === undefined) { user.bestHandName = 'Carta Alta'; migrated = true; }
+                if (user.bestHandScore === undefined) { user.bestHandScore = 0; migrated = true; }
+                if (user.totalFichasWon === undefined) { user.totalFichasWon = 0; migrated = true; }
+                if (user.totalGoldWon === undefined) { user.totalGoldWon = 0; migrated = true; }
                 if (user.playStats === undefined) { user.playStats = { aggressiveness: 50, luck: 50, bluff: 50 }; migrated = true; }
                 if (user.consecutiveDays === undefined) { user.consecutiveDays = 0; migrated = true; }
                 if (isAdmin) {
@@ -453,7 +497,17 @@ module.exports = function configureSockets(io, connectedUsers) {
                 return socket.emit('error_notification', 'No tienes suficientes fondos.');
             }
 
-            dbUser.inventory.push(itemId);
+            // [FIX] Process rewards if it's a currency pack
+            if (itemId.includes('fichas')) {
+                const amount = parseInt(itemId) || 0;
+                dbUser.fichas += amount;
+            } else if (itemId.includes('gold')) {
+                const amount = parseInt(itemId) || 0;
+                dbUser.gold += amount;
+            } else {
+                dbUser.inventory.push(itemId);
+            }
+
             saveUsers(users);
 
             Object.assign(userState, {
@@ -470,45 +524,39 @@ module.exports = function configureSockets(io, connectedUsers) {
         socket.on('get_filtered_ranking', (filter) => {
             let users = readUsers();
             
-            // Map users and account for chips currently on tables
-            let list = users.map(u => {
-                // Find if user is currently connected and has chips in a room
-                // We trust connectedUsers as it syncs when joining/leaving
-                let activeSession = Object.values(connectedUsers).find(s => s.email === u.email);
-                let currentFichas = u.fichas;
-                let currentGold = u.gold;
-
-                if (activeSession && activeSession.roomId) {
-                    // Logic: Normally fichas/gold are deducted when joining room.
-                    // We don't have an easy way to see "chips on table" here without querying roomManager,
-                    // but we can assume if they are in a room, their ranking should reflect their "potential" or total wealth.
-                    // For now, let's just make sure it's at least as up to date as users.json
-                }
-
-                return {
-                    id: u.id,
-                    username: u.username,
-                    fichas: currentFichas,
-                    gold: currentGold,
-                    level: u.level || 1,
-                    tournamentsWon: u.tournamentsWon || 0,
-                    vipRoomsWon: u.vipRoomsWon || 0
-                };
-            });
+            let list = users.map(u => ({
+                id: u.id,
+                username: u.username,
+                fichas: u.fichas,
+                gold: u.gold,
+                level: u.level || 1,
+                tournamentsWon: u.tournamentsWon || 0,
+                vipRoomsWon: u.vipRoomsWon || 0,
+                bestHandName: u.bestHandName || 'Carta Alta',
+                bestHandScore: u.bestHandScore || 0,
+                totalFichasWon: u.totalFichasWon || 0,
+                totalGoldWon: u.totalGoldWon || 0
+            }));
 
             // Sorting logic based on filter
-            if (filter === 'daily') {
+            if (filter === 'daily' || filter === 'vip_tournaments') {
                 // Focus on wins
-                list = list.sort((a, b) => (b.tournamentsWon + b.vipRoomsWon) - (a.tournamentsWon + a.vipRoomsWon)).slice(0, 10);
-            } else if (filter === 'weekly') {
+                list = list.sort((a, b) => (b.tournamentsWon + b.vipRoomsWon) - (a.tournamentsWon + a.vipRoomsWon));
+            } else if (filter === 'weekly' || filter === 'wealth') {
                 // Focus on wealth (Gold + Fichas)
-                list = list.sort((a, b) => (b.fichas + b.gold * 100) - (a.fichas + a.gold * 100)).slice(0, 10);
+                list = list.sort((a, b) => (b.fichas + b.gold * 100) - (a.fichas + a.gold * 100));
+            } else if (filter === 'best_hand') {
+                list = list.sort((a, b) => b.bestHandScore - a.bestHandScore);
+            } else if (filter === 'fichas_won') {
+                list = list.sort((a, b) => b.totalFichasWon - a.totalFichasWon);
+            } else if (filter === 'gold_won') {
+                list = list.sort((a, b) => b.totalGoldWon - a.totalGoldWon);
             } else {
                 // Historical by level
-                list = list.sort((a, b) => b.level - a.level).slice(0, 10);
+                list = list.sort((a, b) => b.level - a.level);
             }
 
-            socket.emit('filtered_ranking_update', list);
+            socket.emit('filtered_ranking_update', list.slice(0, 10));
         });
     });
 }
