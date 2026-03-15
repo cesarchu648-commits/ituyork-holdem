@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSocket } from '../../context/useSocket';
-import { Trophy, Medal, Calendar, Clock, Award } from 'lucide-react';
+import { Trophy, Medal, Calendar, Clock, Award, Zap, Gem } from 'lucide-react';
 
 export default function GlobalRanking ( { onClose } )
 {
@@ -46,31 +46,53 @@ export default function GlobalRanking ( { onClose } )
                     ) ) }
                 </div>
 
-                {/* Podium Rendering Logic adjustment */ }
+                {/* Podium */ }
                 <div className="podium-container">
-                    { top3.map((u, i) => {
-                        const rank = [1, 0, 2][i]; // Gold, Silver, Bronze order in CSS usually
-                        const player = top3[rank];
-                        if (!player) return null;
-                        
-                        let displayStat = `LVL ${player.level}`;
-                        if (filter === 'best_hand') displayStat = player.bestHandName;
-                        if (filter === 'vip_tournaments') displayStat = `${(player.tournamentsWon || 0) + (player.vipRoomsWon || 0)} 🏆`;
-                        if (filter === 'fichas_won') displayStat = `${player.totalFichasWon.toLocaleString()} 🪙`;
-                        if (filter === 'gold_won') displayStat = `${player.totalGoldWon.toLocaleString()} 💎`;
-
-                        const colors = ['#ffd700', '#c0c0c0', '#cd7f32'];
-                        const classes = ['gold', 'silver', 'bronze'];
-                        
-                        return (
-                            <div key={player.id} className={`podium-step ${classes[rank]}`}>
-                                <div className="podium-avatar" style={ { background: colors[rank], width: rank === 0 ? '55px' : '45px', height: rank === 0 ? '55px' : '45px', top: rank === 0 ? '-70px' : '-55px' } } />
-                                {rank === 0 ? <Trophy size={30} color={colors[rank]} /> : <Medal size={24} color={colors[rank]} />}
-                                <span style={ { fontSize: rank === 0 ? '1rem' : '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ player.username }</span>
-                                <span className={rank === 0 ? "neon-text-gold" : "neon-text-blue"} style={ { fontSize: '0.75rem' } }>{displayStat}</span>
-                            </div>
-                        );
-                    })}
+                    {/* Silver (Rank 2) */ }
+                    { top3[ 1 ] && (
+                        <div className="podium-step silver">
+                            <div className="podium-avatar" style={ { background: '#c0c0c0' } } />
+                            <Medal size={ 24 } color="#c0c0c0" style={ { marginTop: '10px' } } />
+                            <span style={ { fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 1 ].username }</span>
+                            <span className="neon-text-blue" style={ { fontSize: '0.7rem' } }>
+                                { filter === 'best_hand' ? top3[ 1 ].bestHandName : 
+                                  filter === 'vip_tournaments' ? `${(top3[ 1 ].tournamentsWon || 0) + (top3[ 1 ].vipRoomsWon || 0)} 🏆` : 
+                                  filter === 'fichas_won' ? `${top3[ 1 ].totalFichasWon.toLocaleString()} 🪙` : 
+                                  filter === 'gold_won' ? `${top3[ 1 ].totalGoldWon.toLocaleString()} 💎` : 
+                                  `LVL ${ top3[ 1 ].level }` }
+                            </span>
+                        </div>
+                    ) }
+                    {/* Gold (Rank 1) */ }
+                    { top3[ 0 ] && (
+                        <div className="podium-step gold">
+                            <div className="podium-avatar" style={ { background: '#ffd700', width: '50px', height: '50px', top: '-60px' } } />
+                            <Trophy size={ 30 } color="#ffd700" style={ { marginTop: '10px' } } />
+                            <span style={ { fontSize: '0.9rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 0 ].username }</span>
+                            <span className="neon-text-gold" style={ { fontSize: '0.8rem' } }>
+                                { filter === 'best_hand' ? top3[ 0 ].bestHandName : 
+                                  filter === 'vip_tournaments' ? `${(top3[ 0 ].tournamentsWon || 0) + (top3[ 0 ].vipRoomsWon || 0)} 🏆` : 
+                                  filter === 'fichas_won' ? `${top3[ 0 ].totalFichasWon.toLocaleString()} 🪙` : 
+                                  filter === 'gold_won' ? `${top3[ 0 ].totalGoldWon.toLocaleString()} 💎` : 
+                                  `LVL ${ top3[ 0 ].level }` }
+                            </span>
+                        </div>
+                    ) }
+                    {/* Bronze (Rank 3) */ }
+                    { top3[ 2 ] && (
+                        <div className="podium-step bronze">
+                            <div className="podium-avatar" style={ { background: '#cd7f32' } } />
+                            <Medal size={ 24 } color="#cd7f32" style={ { marginTop: '10px' } } />
+                            <span style={ { fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 2 ].username }</span>
+                            <span className="neon-text-blue" style={ { fontSize: '0.7rem' } }>
+                                { filter === 'best_hand' ? top3[ 2 ].bestHandName : 
+                                  filter === 'vip_tournaments' ? `${(top3[ 2 ].tournamentsWon || 0) + (top3[ 2 ].vipRoomsWon || 0)} 🏆` : 
+                                  filter === 'fichas_won' ? `${top3[ 2 ].totalFichasWon.toLocaleString()} 🪙` : 
+                                  filter === 'gold_won' ? `${top3[ 2 ].totalGoldWon.toLocaleString()} 💎` : 
+                                  `LVL ${ top3[ 2 ].level }` }
+                            </span>
+                        </div>
+                    ) }
                 </div>
 
                 {/* Others List */ }
