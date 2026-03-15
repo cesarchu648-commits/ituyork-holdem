@@ -55,11 +55,11 @@ export default function GlobalRanking ( { onClose } )
                             <Medal size={ 24 } color="#c0c0c0" style={ { marginTop: '10px' } } />
                             <span style={ { fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 1 ].username }</span>
                             <span className="neon-text-blue" style={ { fontSize: '0.7rem' } }>
-                                { filter === 'best_hand' ? top3[ 1 ].bestHandName : 
+                                { filter === 'best_hand' ? (top3[ 1 ].bestHandName || 'Carta Alta') : 
                                   filter === 'vip_tournaments' ? `${(top3[ 1 ].tournamentsWon || 0) + (top3[ 1 ].vipRoomsWon || 0)} 🏆` : 
-                                  filter === 'fichas_won' ? `${top3[ 1 ].totalFichasWon.toLocaleString()} 🪙` : 
-                                  filter === 'gold_won' ? `${top3[ 1 ].totalGoldWon.toLocaleString()} 💎` : 
-                                  `LVL ${ top3[ 1 ].level }` }
+                                  filter === 'fichas_won' ? `${(top3[ 1 ].totalFichasWon || 0).toLocaleString()} 🪙` : 
+                                  filter === 'gold_won' ? `${(top3[ 1 ].totalGoldWon || 0).toLocaleString()} 💎` : 
+                                  `LVL ${ top3[ 1 ].level || 1 }` }
                             </span>
                         </div>
                     ) }
@@ -70,11 +70,11 @@ export default function GlobalRanking ( { onClose } )
                             <Trophy size={ 30 } color="#ffd700" style={ { marginTop: '10px' } } />
                             <span style={ { fontSize: '0.9rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 0 ].username }</span>
                             <span className="neon-text-gold" style={ { fontSize: '0.8rem' } }>
-                                { filter === 'best_hand' ? top3[ 0 ].bestHandName : 
+                                { filter === 'best_hand' ? (top3[ 0 ].bestHandName || 'Carta Alta') : 
                                   filter === 'vip_tournaments' ? `${(top3[ 0 ].tournamentsWon || 0) + (top3[ 0 ].vipRoomsWon || 0)} 🏆` : 
-                                  filter === 'fichas_won' ? `${top3[ 0 ].totalFichasWon.toLocaleString()} 🪙` : 
-                                  filter === 'gold_won' ? `${top3[ 0 ].totalGoldWon.toLocaleString()} 💎` : 
-                                  `LVL ${ top3[ 0 ].level }` }
+                                  filter === 'fichas_won' ? `${(top3[ 0 ].totalFichasWon || 0).toLocaleString()} 🪙` : 
+                                  filter === 'gold_won' ? `${(top3[ 0 ].totalGoldWon || 0).toLocaleString()} 💎` : 
+                                  `LVL ${ top3[ 0 ].level || 1 }` }
                             </span>
                         </div>
                     ) }
@@ -85,11 +85,11 @@ export default function GlobalRanking ( { onClose } )
                             <Medal size={ 24 } color="#cd7f32" style={ { marginTop: '10px' } } />
                             <span style={ { fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 2 ].username }</span>
                             <span className="neon-text-blue" style={ { fontSize: '0.7rem' } }>
-                                { filter === 'best_hand' ? top3[ 2 ].bestHandName : 
+                                { filter === 'best_hand' ? (top3[ 2 ].bestHandName || 'Carta Alta') : 
                                   filter === 'vip_tournaments' ? `${(top3[ 2 ].tournamentsWon || 0) + (top3[ 2 ].vipRoomsWon || 0)} 🏆` : 
-                                  filter === 'fichas_won' ? `${top3[ 2 ].totalFichasWon.toLocaleString()} 🪙` : 
-                                  filter === 'gold_won' ? `${top3[ 2 ].totalGoldWon.toLocaleString()} 💎` : 
-                                  `LVL ${ top3[ 2 ].level }` }
+                                  filter === 'fichas_won' ? `${(top3[ 2 ].totalFichasWon || 0).toLocaleString()} 🪙` : 
+                                  filter === 'gold_won' ? `${(top3[ 2 ].totalGoldWon || 0).toLocaleString()} 💎` : 
+                                  `LVL ${ top3[ 2 ].level || 1 }` }
                             </span>
                         </div>
                     ) }
@@ -108,12 +108,12 @@ export default function GlobalRanking ( { onClose } )
                         </thead>
                         <tbody>
                             { others.map( ( u, i ) => {
-                                let displayStat = u.fichas.toLocaleString() + ' 🪙';
-                                if (filter === 'historical') displayStat = `Nivel ${u.level}`;
-                                if (filter === 'best_hand') displayStat = u.bestHandName;
+                                let displayStat = (u.fichas || 0).toLocaleString() + ' 🪙';
+                                if (filter === 'historical') displayStat = `Nivel ${u.level || 1}`;
+                                if (filter === 'best_hand') displayStat = u.bestHandName || 'Carta Alta';
                                 if (filter === 'vip_tournaments') displayStat = `${(u.tournamentsWon || 0) + (u.vipRoomsWon || 0)} 🏆`;
-                                if (filter === 'fichas_won') displayStat = `${u.totalFichasWon.toLocaleString()} 🪙`;
-                                if (filter === 'gold_won') displayStat = `${u.totalGoldWon.toLocaleString()} 💎`;
+                                if (filter === 'fichas_won') displayStat = `${(u.totalFichasWon || 0).toLocaleString()} 🪙`;
+                                if (filter === 'gold_won') displayStat = `${(u.totalGoldWon || 0).toLocaleString()} 💎`;
 
                                 return (
                                     <tr key={ u.id } style={ { borderBottom: '1px solid rgba(255,255,255,0.05)' } }>
@@ -121,7 +121,7 @@ export default function GlobalRanking ( { onClose } )
                                         <td style={ { padding: '12px', fontWeight: 'bold' } }>{ u.username }</td>
                                         <td style={ { padding: '12px', textAlign: 'center' } }>
                                             <div style={ { background: 'rgba(0,240,255,0.1)', border: '1px solid var(--color-neon-blue)', borderRadius: '10px', fontSize: '0.7rem', padding: '2px 8px', display: 'inline-block' } }>
-                                                LVL { u.level }
+                                                LVL { u.level || 1 }
                                             </div>
                                         </td>
                                         <td style={ { padding: '12px', textAlign: 'right' } } className="neon-text-blue">
