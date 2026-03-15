@@ -256,14 +256,12 @@ export default function Lobby ()
 
             </div>
 
-            {/* Modals for Interactivity - Portal-like rendering at top level */ }
-            <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999 }}>
-                { showInventory && <Inventory user={ user } onClose={ () => setShowInventory( false ) } /> }
-                { showRanking && <GlobalRanking onClose={ () => setShowRanking( false ) } /> }
-                { showProfile && <Profile user={ user } onClose={ () => setShowProfile( false ) } /> }
-                { showStore && <Store onClose={ () => setShowStore( false ) } /> }
-                { showDailyRewards && <DailyRewards user={ user } onClose={ () => setShowDailyRewards( false ) } /> }
-            </div>
+            {/* Modals for Interactivity - Render directly at root level of app-container */ }
+            { showInventory && <Inventory user={ user } onClose={ () => setShowInventory( false ) } /> }
+            { showRanking && <GlobalRanking onClose={ () => setShowRanking( false ) } /> }
+            { showProfile && <Profile user={ user } onClose={ () => setShowProfile( false ) } /> }
+            { showStore && <Store onClose={ () => setShowStore( false ) } /> }
+            { showDailyRewards && <DailyRewards user={ user } onClose={ () => setShowDailyRewards( false ) } /> }
 
             <footer style={ { marginTop: 'auto', textAlign: 'center', padding: '10px 0', color: 'rgba(255,255,255,0.4)', fontSize: '14px', letterSpacing: '2px' } }>
                 <span className="animate-neon-bounce" style={ { display: 'inline-block' } }>Software Developer By: Chuintwo</span>

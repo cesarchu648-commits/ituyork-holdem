@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSocket } from '../../context/useSocket';
-import { Trophy, Medal, Calendar, Clock, Award, Zap, Gem } from 'lucide-react';
+import { Trophy, Award, Zap, Star, Shield, Users } from 'lucide-react';
 
 export default function GlobalRanking ( { onClose } )
 {
@@ -31,9 +31,9 @@ export default function GlobalRanking ( { onClose } )
                     { [
                         { id: 'historical', label: 'Nivel', icon: <Award size={ 16 } /> },
                         { id: 'best_hand', label: 'Manos', icon: <Trophy size={ 16 } /> },
-                        { id: 'vip_tournaments', label: 'VIP/Torneos', icon: <Medal size={ 16 } /> },
+                        { id: 'vip_tournaments', label: 'VIP/Torneos', icon: <Shield size={ 16 } /> },
                         { id: 'fichas_won', label: 'Fichas', icon: <Zap size={ 16 } /> },
-                        { id: 'gold_won', label: 'Gold', icon: <Gem size={ 16 } /> }
+                        { id: 'gold_won', label: 'Gold', icon: <Star size={ 16 } /> }
                     ].map( t => (
                         <button
                             key={ t.id }
@@ -52,7 +52,7 @@ export default function GlobalRanking ( { onClose } )
                     { top3[ 1 ] && (
                         <div className="podium-step silver">
                             <div className="podium-avatar" style={ { background: '#c0c0c0' } } />
-                            <Medal size={ 24 } color="#c0c0c0" style={ { marginTop: '10px' } } />
+                            <Award size={ 24 } color="#c0c0c0" style={ { marginTop: '10px' } } />
                             <span style={ { fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 1 ].username }</span>
                             <span className="neon-text-blue" style={ { fontSize: '0.7rem' } }>
                                 { filter === 'best_hand' ? (top3[ 1 ].bestHandName || 'Carta Alta') : 
@@ -82,7 +82,7 @@ export default function GlobalRanking ( { onClose } )
                     { top3[ 2 ] && (
                         <div className="podium-step bronze">
                             <div className="podium-avatar" style={ { background: '#cd7f32' } } />
-                            <Medal size={ 24 } color="#cd7f32" style={ { marginTop: '10px' } } />
+                            <Award size={ 24 } color="#cd7f32" style={ { marginTop: '10px' } } />
                             <span style={ { fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' } }>{ top3[ 2 ].username }</span>
                             <span className="neon-text-blue" style={ { fontSize: '0.7rem' } }>
                                 { filter === 'best_hand' ? (top3[ 2 ].bestHandName || 'Carta Alta') : 
@@ -130,6 +130,13 @@ export default function GlobalRanking ( { onClose } )
                                     </tr>
                                 );
                             } ) }
+                            { ranking.length === 0 && (
+                                <tr>
+                                    <td colSpan="4" style={{ padding: '40px', textAlign: 'center', color: 'gray' }}>
+                                        Cargando datos del ranking...
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
