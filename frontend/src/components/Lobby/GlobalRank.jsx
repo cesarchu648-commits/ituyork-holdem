@@ -4,7 +4,6 @@ import { Trophy, Award, Zap, Star, Shield, Users } from 'lucide-react';
 
 export default function GlobalRank ( { onClose } )
 {
-    console.log("GlobalRank component mounted");
     const { socket } = useSocket();
     const [ ranking, setRanking ] = useState( [] );
     const [ filter, setFilter ] = useState( 'historical' );
@@ -13,10 +12,8 @@ export default function GlobalRank ( { onClose } )
     {
         if ( socket )
         {
-            console.log("Requesting ranking with filter:", filter);
             socket.emit( 'get_filtered_ranking', filter );
             socket.on( 'filtered_ranking_update', (data) => {
-                console.log("Received ranking data:", data);
                 setRanking(data);
             });
             return () => socket.off( 'filtered_ranking_update' );

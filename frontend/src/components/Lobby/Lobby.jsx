@@ -190,7 +190,7 @@ export default function Lobby ()
                         <button className="btn btn-primary" onClick={ () => setShowInventory( true ) } style={ { width: '100%', padding: '15px', display: 'flex', justifyContent: 'center', gap: '10px' } }>
                             <Trophy size={ 18 } /> Inventario
                         </button>
-                        <button className="btn btn-gold" onClick={ () => { alert('Abriendo Ranking...'); setShowRanking( true ); } } style={ { width: '100%', padding: '15px', display: 'flex', justifyContent: 'center', gap: '10px' } }>
+                        <button className="btn btn-gold" onClick={ () => setShowRanking( true ) } style={ { width: '100%', padding: '15px', display: 'flex', justifyContent: 'center', gap: '10px' } }>
                             <Users size={ 18 } /> Ranking Global
                         </button>
                         <button className="btn btn-glass" onClick={ () => setShowStore( true ) } style={ { width: '100%', padding: '15px', display: 'flex', justifyContent: 'center', gap: '10px', border: '1px solid var(--color-gold)' } }>
