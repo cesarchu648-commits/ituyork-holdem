@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSocket } from '../../context/useSocket';
 import { Gift, CheckCircle, Box, Star } from 'lucide-react';
 
@@ -15,15 +15,7 @@ const REWARDS = [
 export default function DailyRewards ( { user, onClose } )
 {
     const { socket } = useSocket();
-    const claimedToday = useMemo( () =>
-    {
-        if ( !user.lastClaimDate ) return false;
-        const last = new Date( user.lastClaimDate );
-        const now = new Date();
-        return last.getDate() === now.getDate() &&
-            last.getMonth() === now.getMonth() &&
-            last.getFullYear() === now.getFullYear();
-    }, [ user.lastClaimDate ] );
+    const claimedToday = !user.canClaimToday;
 
     const [ justClaimed, setJustClaimed ] = useState( false );
     const [ animationDay, setAnimationDay ] = useState( 0 );

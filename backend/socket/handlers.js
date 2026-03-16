@@ -13,6 +13,16 @@ const saveUsers = (users) => {
     fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 };
 
+const canClaimToday = ( lastClaimDate ) =>
+{
+    if ( !lastClaimDate ) return true;
+    const now = new Date();
+    const last = new Date( lastClaimDate );
+    return now.getDate() !== last.getDate() ||
+        now.getMonth() !== last.getMonth() ||
+        now.getFullYear() !== last.getFullYear();
+};
+
 module.exports = function configureSockets(io, connectedUsers) {
     const roomManager = new RoomManager(io);
 
@@ -107,7 +117,8 @@ module.exports = function configureSockets(io, connectedUsers) {
                     vipRoomsWon: dbUser.vipRoomsWon,
                     level: dbUser.level,
                     xp: dbUser.xp,
-                    bestHandName: dbUser.bestHandName
+                    bestHandName: dbUser.bestHandName,
+                    canClaimToday: canClaimToday(dbUser.lastClaimDate)
                 });
                 io.to( socketId ).emit( 'user_update', connectedUsers[ socketId ] );
             }
@@ -223,8 +234,8 @@ module.exports = function configureSockets(io, connectedUsers) {
                 delete connectedUsers[oldSocketId];
             }
 
-            connectedUsers[socket.id] = { ...user, state: 'Lobby', socketId: socket.id };
-            socket.emit('login_success', { user });
+            connectedUsers[socket.id] = { ...user, state: 'Lobby', socketId: socket.id, canClaimToday: canClaimToday(user.lastClaimDate) };
+            socket.emit('login_success', { user: connectedUsers[socket.id] });
             broadcastToAdmins(io, connectedUsers, 'global_session_update', Object.values(connectedUsers));
         });
 
@@ -464,7 +475,8 @@ module.exports = function configureSockets(io, connectedUsers) {
                     gold: dbUser.gold,
                     consecutiveDays: dbUser.consecutiveDays,
                     lastClaimDate: dbUser.lastClaimDate,
-                    badges: dbUser.badges
+                    badges: dbUser.badges,
+                    canClaimToday: false
                 });
 
                 socket.emit('user_update', userState);

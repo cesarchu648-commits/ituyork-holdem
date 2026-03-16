@@ -22,6 +22,7 @@ export default function Lobby ()
     const [ showProfile, setShowProfile ] = useState( false );
     const [ showStore, setShowStore ] = useState( false );
     const [ showDailyRewards, setShowDailyRewards ] = useState( false );
+    const [ dailyDismissed, setDailyDismissed ] = useState( false );
 
     // Custom hook logically
     useEffect( () =>
@@ -70,30 +71,12 @@ export default function Lobby ()
     // Daily Rewards Auto-Popup
     useEffect( () =>
     {
-        if ( !user ) return;
-
-        let shouldShow = false;
-        if ( !user.lastClaimDate )
+        if ( user && user.canClaimToday && !dailyDismissed && !showDailyRewards )
         {
-            shouldShow = true;
-        } else
-        {
-            const last = new Date( user.lastClaimDate );
-            const now = new Date();
-            if ( last.getDate() !== now.getDate() || last.getMonth() !== now.getMonth() || last.getFullYear() !== now.getFullYear() )
-            {
-                shouldShow = true;
-            }
-        }
-
-        if ( shouldShow )
-        {
-            // Set timeout to break the sync render loop if needed, 
-            // though derive logic is usually better. Here it's a modal popup.
-            const t = setTimeout( () => setShowDailyRewards( true ), 100 );
+            const t = setTimeout( () => setShowDailyRewards( true ), 1000 );
             return () => clearTimeout( t );
         }
-    }, [ user?.lastClaimDate, user ] );
+    }, [ user?.canClaimToday, dailyDismissed, showDailyRewards, user ] );
 
     const sendGlobalChat = ( e ) =>
     {
@@ -261,7 +244,7 @@ export default function Lobby ()
             { showRanking && <GlobalRank onClose={ () => setShowRanking( false ) } /> }
             { showProfile && <Profile user={ user } onClose={ () => setShowProfile( false ) } /> }
             { showStore && <Store onClose={ () => setShowStore( false ) } /> }
-            { showDailyRewards && <DailyRewards user={ user } onClose={ () => setShowDailyRewards( false ) } /> }
+            { showDailyRewards && <DailyRewards user={ user } onClose={ () => { setShowDailyRewards( false ); setDailyDismissed( true ); } } /> }
 
             <footer style={ { marginTop: 'auto', textAlign: 'center', padding: '10px 0', color: 'rgba(255,255,255,0.4)', fontSize: '14px', letterSpacing: '2px' } }>
                 <span className="animate-neon-bounce" style={ { display: 'inline-block' } }>Software Developer By: Chuintwo</span>
