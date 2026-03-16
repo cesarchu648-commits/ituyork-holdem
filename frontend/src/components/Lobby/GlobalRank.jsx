@@ -99,7 +99,7 @@ export default function GlobalRank ( { onClose } )
                             </tr>
                         </thead>
                         <tbody>
-                            { ranking.map( ( u, i ) => {
+                            { others.map( ( u, i ) => {
                                 let displayStat = (u.fichas || 0).toLocaleString();
                                 if (filter === 'historical') displayStat = `LVL ${u.level || 1}`;
                                 if (filter === 'best_hand') displayStat = u.bestHandName || 'Carta Alta';
@@ -109,7 +109,7 @@ export default function GlobalRank ( { onClose } )
 
                                 return (
                                     <tr key={ u.id } style={ { borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.85rem' } }>
-                                        <td style={ { padding: '10px', color: 'gray' } }>#{ i + 1 }</td>
+                                        <td style={ { padding: '10px', color: 'gray' } }>#{ i + 4 }</td>
                                         <td style={ { padding: '10px', fontWeight: 'bold' } }>{ u.username }</td>
                                         <td style={ { padding: '10px', textAlign: 'right' } } className="neon-text-blue">
                                             {displayStat}
