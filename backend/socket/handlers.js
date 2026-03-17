@@ -34,8 +34,16 @@ module.exports = function configureSockets(io, connectedUsers) {
         // Process final chip balances for ALL players at the table to ensure persistance
         players.forEach(p => {
             if (p.isBot) return;
-            let dbUser = users.find(u => u.username === p.user.username);
+            // [FIX] Use ID for search, much safer
+            let dbUser = users.find(u => u.id === p.user.id);
             if (dbUser) {
+                // Update "In Room" balance so it survives a crash
+                if (tier === 'Principiante' || tier === 'Pro') {
+                    dbUser.chipsInRoom = p.chips;
+                } else if (tier === 'VIP' || tier === 'Torneos') {
+                    dbUser.goldInRoom = p.chips;
+                }
+                
                 // Participation XP
                 dbUser.xp = (dbUser.xp || 0) + 5;
                 checkLevelUp(dbUser);
@@ -45,7 +53,7 @@ module.exports = function configureSockets(io, connectedUsers) {
 
         winners.forEach( w =>
         {
-            let dbUser = users.find( u => u.username === w.username );
+            let dbUser = users.find( u => u.id === w.id || u.username === w.username );
             if ( dbUser )
             {
                 dbUser.handsWon = ( dbUser.handsWon || 0 ) + 1;
@@ -223,6 +231,16 @@ module.exports = function configureSockets(io, connectedUsers) {
                 if (migrated) saveUsers(users);
             }
 
+            // [FIX] Ghost Chip Recovery: If the server crashed, return chips that were "in room"
+            if ( ( user.chipsInRoom && user.chipsInRoom > 0 ) || ( user.goldInRoom && user.goldInRoom > 0 ) )
+            {
+                user.fichas += ( user.chipsInRoom || 0 );
+                user.gold += ( user.goldInRoom || 0 );
+                user.chipsInRoom = 0;
+                user.goldInRoom = 0;
+                saveUsers( users );
+            }
+
             // [FIX] Disconnect previous session if it exists to avoid zombies
             const oldSocketId = Object.keys(connectedUsers).find(sid => connectedUsers[sid].email === email);
             if (oldSocketId && oldSocketId !== socket.id) {
@@ -243,10 +261,24 @@ module.exports = function configureSockets(io, connectedUsers) {
             console.log('Client disconnected:', socket.id);
             const userState = connectedUsers[socket.id];
             if (userState && userState.roomId) {
+                // [FIX] Return chips on disconnect exactly like leave_room
                 const room = roomManager.rooms.get(userState.roomId);
-                if (room) {
-                    roomManager.leaveRoom(socket.id, userState.roomId);
-                    room.broadcastState();
+                const res = roomManager.leaveRoom(socket.id, userState.roomId);
+                if (res && res.success) {
+                    let users = readUsers();
+                    let dbUser = users.find(u => u.email === userState.email);
+                    if (dbUser) {
+                        if (room.tier === 'Principiante' || room.tier === 'Pro') {
+                            dbUser.fichas += res.chipsToReturn;
+                            dbUser.chipsInRoom = 0;
+                        } else if (room.tier === 'VIP' || room.tier === 'Torneos') {
+                            if (room.gameState === 'WAITING' || res.chipsToReturn === 0 || room.players.length === 1) {
+                                dbUser.gold += res.chipsToReturn;
+                            }
+                            dbUser.goldInRoom = 0;
+                        }
+                        saveUsers(users);
+                    }
                 }
             }
             delete connectedUsers[socket.id];
@@ -273,12 +305,16 @@ module.exports = function configureSockets(io, connectedUsers) {
             const room = roomManager.rooms.get(roomId);
             if (room.tier === 'Principiante' || room.tier === 'Pro') {
                 dbUser.fichas -= result.newPlayer.chips;
+                dbUser.chipsInRoom = result.newPlayer.chips;
             } else if (room.tier === 'VIP' || room.tier === 'Torneos') {
                 dbUser.gold -= result.newPlayer.chips;
+                dbUser.goldInRoom = result.newPlayer.chips;
             }
             saveUsers(users);
             userState.fichas = dbUser.fichas;
             userState.gold = dbUser.gold;
+            userState.chipsInRoom = dbUser.chipsInRoom;
+            userState.goldInRoom = dbUser.goldInRoom;
 
             userState.state = 'Room';
             userState.roomId = roomId;
@@ -302,6 +338,7 @@ module.exports = function configureSockets(io, connectedUsers) {
 
                 if (room.tier === 'Principiante' || room.tier === 'Pro') {
                     dbUser.fichas += res.chipsToReturn;
+                    dbUser.chipsInRoom = 0;
                 } else if (room.tier === 'VIP' || room.tier === 'Torneos') {
                     // Penalty logic for Survivor: keep entry if game started and wait for finish, unless they are eliminated (0 chips) or waiting
                     if (room.gameState === 'WAITING' || res.chipsToReturn === 0 || room.players.length === 1) {
@@ -309,10 +346,13 @@ module.exports = function configureSockets(io, connectedUsers) {
                     } else {
                         socket.emit('error_notification', 'Has perdido 10,000 Gold por abandonar Torneo/VIP.');
                     }
+                    dbUser.goldInRoom = 0;
                 }
                 saveUsers(users);
                 userState.fichas = dbUser.fichas;
                 userState.gold = dbUser.gold;
+                userState.chipsInRoom = 0;
+                userState.goldInRoom = 0;
             }
 
             userState.state = 'Lobby';
